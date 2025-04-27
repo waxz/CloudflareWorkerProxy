@@ -5,7 +5,7 @@ addEventListener('fetch', event => {
 // Configuration options
 const config = {
   // Support multiple domains, you should modifiy this if you wish to deploy it to your own Cloudflare Worker.
-  proxyDomains: ['webproxy.stratosphericus.workers.dev', 'proxy.liyao.space'],
+  proxyDomains: [],
   homepage: true, // Whether to enable the homepage
   allowedDomains: [], // Domain whitelist, set to [] to allow all
 
@@ -39,11 +39,11 @@ async function handleRequest(request) {
   const url = new URL(request.url)
   
   // Check if the current domain is one of our proxy domains
-  const isProxyHost = config.proxyDomains.includes(url.host)
+  const isProxyHost = true; // config.proxyDomains.includes(url.host)
   
   // If homepage is enabled and this is a root path request, return homepage
   if (config.homepage && url.pathname === '/' && isProxyHost) {
-    return getHomePage()
+    return getHomePage(url.host)
   }
 
   let targetURL
@@ -712,7 +712,7 @@ class HeadRewriter {
   }
 }
 
-function getHomePage() {
+function getHomePage(host) {
   return new Response(`<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -808,10 +808,12 @@ function getHomePage() {
     
     <p class="example">
     Examples: 
-    <a href="https://webproxy.stratosphericus.workers.dev/https://www.tsukuba.ac.jp/">tsukuba.ac.jp</a>, 
-    <a href="https://webproxy.stratosphericus.workers.dev/https://www.jlu.edu.cn/">jlu.edu.cn</a>, 
-    <a href="https://webproxy.stratosphericus.workers.dev/https://news.ycombinator.com">ycombinator.com</a>, 
-    <a href="https://github.com/BH3GEI/CloudflareWorkerProxy">Github Repo</a>
+    <a href="https://${host}/https://www.tsukuba.ac.jp/">tsukuba.ac.jp</a>, 
+    <a href="https://${host}/https://www.jlu.edu.cn/">jlu.edu.cn</a>, 
+    <a href="https://${host}/https://news.ycombinator.com">ycombinator.com</a>, 
+    <a href="https://github.com/BH3GEI/CloudflareWorkerProxy">Github Repo BH3GEI/CloudflareWorkerProxy</a>
+    <a href="https://github.com/waxz/CloudflareWorkerProxy">Github Repo waxz/CloudflareWorkerProxy</a>
+
 </p>
 
     <div class="features">
